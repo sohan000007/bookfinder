@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fancy Book Finder</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&family=Roboto&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Roboto', sans-serif;
+      color: #f0f0f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem 3rem;
+      overflow-x: hidden;
+    }
+
+    h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 2.8rem;
+      text-align: center;
+      margin-bottom: 1rem;
+      letter-spacing: 0.12em;
+      color: #fff;
+      text-shadow:
+         0 1px 1px rgba(0,0,0,0.12),
+         0 2px 4px rgba(0,0,0,0.14);
+      user-select: none;
+    }
+
+    form {
+      width: 100%;
+      max-width: 620px;
+      display: flex;
+      gap: 0.6rem;
+      margin-bottom: 2rem;
+    }
+
+    input[type="search"] {
+      flex: 1;
+      border: none;
+      padding: 1rem 1.3rem;
+      border-radius: 40px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      font-family: 'Poppins', sans-serif;
+      background: rgba(255 255 255 / 0.15);
+      color: #fff;
+      box-shadow:
+        inset 0 0 8px rgba(255 255 255 / 0.3);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      outline-offset: 4px;
+      outline-color: transparent;
+    }
+    input[type="search"]:focus {
+      background: rgba(255 255 255 / 0.32);
+      box-shadow:
+        inset 0 0 20px rgba(255 255 255 / 0.55);
+      outline-color: #b48aff;
+    }
+    input::placeholder {
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    button {
+      border: none;
+      background: linear-gradient(120deg, #b48aff, #7b6eff);
+      padding: 0 2rem;
+      border-radius: 40px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #fff;
+      cursor: pointer;
+      transition:
+        background-position 0.35s ease,
+        box-shadow 0.3s ease;
+      background-size: 200% 200%;
+      background-position: 0% center;
+      box-shadow:
+         0 4px 6px rgba(131,90,255,.3),
+         0 1px 1px rgba(255,255,255,.1);
+      user-select: none;
+    }
+    button:hover {
+      background-position: 100% center;
+      box-shadow:
+        0 6px 12px rgba(131,90,255,.7),
+        0 3px 4px rgba(255,255,255,.15);
+    }
+    button:active {
+      transform: scale(0.97);
+      box-shadow:
+        0 3px 6px rgba(131,90,255,.55);
+    }
+
+    #results {
+      display: grid;
+      grid-template-columns: repeat(auto-fit,minmax(280px,1fr));
+      gap: 1.7rem;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .book-card {
+      background: rgba(255 255 255 / 0.12);
+      border-radius: 18px;
+      padding: 1.2rem 1.4rem 1.8rem;
+      color: #f5f5f7;
+      box-shadow:
+       0 5px 15px rgb(0 0 0 / 0.12);
+      backdrop-filter: blur(12px);
+      display: flex;
+      gap: 1rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.5s forwards;
+      transition:
+        box-shadow 0.4s ease,
+        transform 0.3s ease;
+      cursor: pointer;
+      user-select: none;
+    }
+    .book-card:hover {
+      box-shadow:
+        0 10px 25px rgb(131 90 255 / 0.9);
+      transform: translateY(8px) scale(1.02);
+    }
+
+    .book-cover {
+      width: 90px;
+      height: 130px;
+      border-radius: 14px;
+      object-fit: cover;
+      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgb(0 0 0 / 0.4);
+      background-color: #555;
+    }
+
+    .book-info {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .book-title {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 1.3rem;
+      margin-bottom: 0.3rem;
+      color: #fff;
+      text-shadow:
+         0 1px 3px rgba(0,0,0,0.55);
+    }
+    .book-authors {
+      font-style: italic;
+      font-weight: 600;
+      color: #acb5c0;
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+    }
+    .book-year {
+      color: #c6cdda;
+      font-size: 0.85rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .subject-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+    }
+    .tag {
+      background: #8e7aff88;
+      padding: 0.25rem 0.75rem;
+      font-size: 0.75rem;
+      border-radius: 18px;
+      font-weight: 600;
+      color: #e0dfff;
+      user-select: none;
+      box-shadow: 0 0 7px #b48affaa;
+    }
+
+    #message {
+      max-width: 600px;
+      margin: 3rem auto 0;
+      font-weight: 600;
+      font-size: 1.15rem;
+      text-align: center;
+      color: #d0c8ff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 480px) {
+      .book-card {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+      .book-cover {
+        margin-bottom: 1rem;
+      }
+      .book-info {
+        align-items: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1 aria-label="Book Finder fancy stylish title">📚 FIND YOUR NEXT FAVORITE BOOK</h1>
+
+  <form id="searchForm" aria-label="Search books form" role="search">
+    <input
+      type="search"
+      id="queryInput"
+      placeholder="Type a book title and hit Search..."
+      aria-required="true"
+      required
+      autocomplete="off"
+    />
+    <button type="submit" aria-label="Search books">Search</button>
+  </form>
+
+  <main id="results" aria-live="polite" aria-relevant="additions"></main>
+
+  <section id="message" role="alert" aria-live="assertive" aria-atomic="true"></section>
+
+  <script>
+    (() => {
+      const form = document.getElementById('searchForm');
+      const input = document.getElementById('queryInput');
+      const resultsDiv = document.getElementById('results');
+      const messageDiv = document.getElementById('message');
+
+      function clearResults() {
+        resultsDiv.innerHTML = '';
+        messageDiv.textContent = '';
+      }
+
+      function createBookCard(book, index) {
+        const title = book.title || 'Untitled';
+        const authors = book.author_name ? book.author_name.join(', ') : 'Unknown Author';
+        const year = book.first_publish_year || 'N/A';
+        const coverId = book.cover_i;
+        const coverURL = coverId
+          ? `https://covers.openlibrary.org/b/id/${coverId}-L.jpg`
+          : 'https://via.placeholder.com/90x130/7b68ee/ffffff?text=No+Cover';
+
+        const tags = book.subject ? book.subject.slice(0, 5) : [];
+        const tagHTML = tags.map(tag => `<span class="tag">${tag}</span>`).join('');
+
+        const delay = (index + 1) * 120;
+
+        return `
+          <article 
+            class="book-card" 
+            tabindex="0" 
+            aria-label="Book titled ${title} by ${authors}"
+            style="animation-delay: ${delay}ms;"
+          >
+            <img src="${coverURL}" alt="Cover of ${title}" loading="lazy" class="book-cover" width="90" height="130" />
+            <div class="book-info">
+              <h2 class="book-title">${title}</h2>
+              <p class="book-authors">By: ${authors}</p>
+              <p class="book-year">First published: ${year}</p>
+              <div class="subject-tags">${tagHTML}</div>
+            </div>
+          </article>
+        `;
+      }
+
+      async function fetchBooks(query) {
+        clearResults();
+        messageDiv.textContent = 'Searching books...';
+        try {
+          const url = `https://openlibrary.org/search.json?title=${encodeURIComponent(query)}&limit=30`;
+          const res = await fetch(url);
+          if (!res.ok) throw new Error('Failed to load data. Please try again later.');
+
+          const data = await res.json();
+
+          if (data.numFound === 0) {
+            messageDiv.textContent = 'No books found. Try a different title.';
+            return;
+          }
+
+          messageDiv.textContent = '';
+          resultsDiv.innerHTML = data.docs.map(createBookCard).join('');
+        } catch (error) {
+          console.error(error);
+          messageDiv.textContent = 'Oops, something went wrong! Please check your connection and try again.';
+        }
+      }
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const query = input.value.trim();
+        if (query.length < 2) {
+          messageDiv.textContent = 'Please enter at least 2 letters to search.';
+          return;
+        }
+        fetchBooks(query);
+      });
+    })();
+  </script>
+</body>
+</html>
